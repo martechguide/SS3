@@ -1,0 +1,359 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: hsl(0, 0%, 100%);
+  --foreground: hsl(20, 14.3%, 4.1%);
+  --muted: hsl(60, 4.8%, 95.9%);
+  --muted-foreground: hsl(25, 5.3%, 44.7%);
+  --popover: hsl(0, 0%, 100%);
+  --popover-foreground: hsl(20, 14.3%, 4.1%);
+  --card: hsl(0, 0%, 100%);
+  --card-foreground: hsl(20, 14.3%, 4.1%);
+  --border: hsl(20, 5.9%, 90%);
+  --input: hsl(20, 5.9%, 90%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(142, 76%, 36%);
+  --secondary-foreground: hsl(355, 7%, 97%);
+  --accent: hsl(60, 4.8%, 95.9%);
+  --accent-foreground: hsl(24, 9.8%, 10%);
+  --destructive: hsl(0, 84.2%, 60.2%);
+  --destructive-foreground: hsl(60, 9.1%, 97.8%);
+  --ring: hsl(20, 14.3%, 4.1%);
+  --radius: 0.5rem;
+}
+
+.dark {
+  --background: hsl(240, 10%, 3.9%);
+  --foreground: hsl(0, 0%, 98%);
+  --muted: hsl(240, 3.7%, 15.9%);
+  --muted-foreground: hsl(240, 5%, 64.9%);
+  --popover: hsl(240, 10%, 3.9%);
+  --popover-foreground: hsl(0, 0%, 98%);
+  --card: hsl(240, 10%, 3.9%);
+  --card-foreground: hsl(0, 0%, 98%);
+  --border: hsl(240, 3.7%, 15.9%);
+  --input: hsl(240, 3.7%, 15.9%);
+  --primary: hsl(207, 90%, 54%);
+  --primary-foreground: hsl(211, 100%, 99%);
+  --secondary: hsl(142, 76%, 36%);
+  --secondary-foreground: hsl(0, 0%, 98%);
+  --accent: hsl(240, 3.7%, 15.9%);
+  --accent-foreground: hsl(0, 0%, 98%);
+  --destructive: hsl(0, 62.8%, 30.6%);
+  --destructive-foreground: hsl(0, 0%, 98%);
+  --ring: hsl(240, 4.9%, 83.9%);
+  --radius: 0.5rem;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply font-sans antialiased bg-background text-foreground;
+  }
+}
+
+/* YouTube embed customization to hide branding elements and block redirects */
+.video-embed-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+}
+
+.youtube-embed-iframe {
+  pointer-events: auto;
+  border-radius: 8px;
+}
+
+/* Create a protective overlay to block unwanted clicks */
+.video-embed-container .redirect-blocker {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 20;
+  pointer-events: none;
+  background: transparent;
+}
+
+/* Block specific areas where YouTube branding/links appear */
+.video-embed-container .redirect-blocker::before {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 140px;
+  height: 50px;
+  background: transparent;
+  pointer-events: all;
+  z-index: 25;
+}
+
+.video-embed-container .redirect-blocker::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  width: 120px;
+  height: 50px;
+  background: transparent;
+  pointer-events: all;
+  z-index: 25;
+}
+
+/* Hide the "Watch on YouTube" button in bottom left corner */
+.video-embed-container::after {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  left: 6px;
+  width: 140px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 15;
+  pointer-events: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Hide YouTube logo and controls in bottom right corner */
+.video-embed-container::before {
+  content: "";
+  position: absolute;
+  bottom: 6px;
+  right: 6px;
+  width: 120px;
+  height: 36px;
+  background: rgba(0, 0, 0, 0.85);
+  z-index: 15;
+  pointer-events: none;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* Additional strategic overlays to hide YouTube branding */
+.video-embed-container .youtube-brand-overlay-1 {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  width: 100px;
+  height: 30px;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 15;
+  pointer-events: none;
+  border-radius: 4px;
+}
+
+.video-embed-container .youtube-brand-overlay-2 {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  width: 80px;
+  height: 25px;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 15;
+  pointer-events: none;
+  border-radius: 4px;
+  transform: translateY(-50%);
+}
+
+/* Hide elements gracefully when video is being interacted with */
+.video-embed-container:hover::after,
+.video-embed-container:hover::before,
+.video-embed-container:hover .youtube-brand-overlay-1,
+.video-embed-container:hover .youtube-brand-overlay-2 {
+  opacity: 0.7;
+  transition: opacity 0.3s ease;
+}
+
+/* Fade out overlays when user clicks to play */
+.video-embed-container.playing::after,
+.video-embed-container.playing::before,
+.video-embed-container.playing .youtube-brand-overlay-1,
+.video-embed-container.playing .youtube-brand-overlay-2 {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+
+/* Additional overlay to cover YouTube's control bar branding */
+.video-embed-container .youtube-controls-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50px;
+  background: linear-gradient(to top, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.3) 70%, transparent 100%);
+  z-index: 10;
+  pointer-events: none;
+  border-radius: 0 0 8px 8px;
+}
+
+/* When user hovers, reduce overlay intensity for better usability */
+.video-embed-container:hover .youtube-controls-overlay {
+  opacity: 0.3;
+  transition: opacity 0.3s ease;
+}
+
+/* Completely hide overlays when playing for better viewing experience */
+.video-embed-container.playing .youtube-controls-overlay {
+  opacity: 0;
+  transition: opacity 0.5s ease 2s; /* Delay to allow user to see controls first */
+}
+
+/* Secure video embed styles */
+.secure-video-container {
+  position: relative;
+  overflow: hidden;
+  border-radius: 8px;
+  user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+}
+
+.secure-youtube-iframe {
+  pointer-events: auto;
+  border-radius: 8px;
+}
+
+/* YouTube logo blocking area hover effects */
+.youtube-logo-blocker {
+  position: relative;
+  overflow: hidden;
+  z-index: 101 !important;
+}
+
+.youtube-logo-blocker::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+  transition: left 0.5s ease;
+  z-index: 52;
+}
+
+.youtube-logo-blocker:hover::before {
+  left: 100%;
+}
+
+.youtube-logo-blocker:hover {
+  background: rgba(64, 64, 64, 0.9) !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
+  transform: scale(1.02);
+}
+
+.youtube-logo-blocker:active {
+  transform: scale(0.98);
+  background: rgba(32, 32, 32, 0.95) !important;
+}
+
+/* Disable text selection and context menu on secure videos */
+.secure-video-container * {
+  user-select: none !important;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+}
+
+/* Additional security for iframe content */
+.secure-video-container iframe {
+  border: none;
+  outline: none;
+}
+
+/* Security indicators */
+.secure-video-container::after {
+  content: "🔒";
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+  z-index: 30;
+  pointer-events: none;
+}
+
+/* Block the copy link context menu area - positioned at top right where it actually appears */
+.secure-video-container .copy-link-blocker {
+  position: absolute;
+  top: 120px;
+  right: 8px;
+  width: 220px;
+  height: 80px;
+  background: rgba(0, 0, 0, 0.98);
+  z-index: 999;
+  pointer-events: all;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.8);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  backdrop-filter: blur(8px);
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+/* Additional comprehensive overlay to block all right-side interactions */
+.secure-video-container .right-side-blocker {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 250px;
+  height: 100%;
+  background: transparent;
+  z-index: 40;
+  pointer-events: all;
+}
+
+/* Block the entire top area where context menus and notifications appear */
+.secure-video-container .top-area-blocker {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 200px;
+  background: transparent;
+  z-index: 900;
+  pointer-events: all;
+}
+
+/* Specific overlay to cover the exact location where "Link copied" appears */
+.secure-video-container .notification-blocker {
+  position: absolute;
+  top: 100px;
+  right: 50px;
+  width: 250px;
+  height: 100px;
+  background: rgba(0, 0, 0, 0.95);
+  z-index: 1000;
+  pointer-events: all;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: rgba(255, 255, 255, 0.9);
+  font-weight: 500;
+}
+
+/* Block the entire right edge where context menus appear */
+.secure-video-container .edge-protection {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100%;
+  background: transparent;
+  z-index: 40;
+  pointer-events: all;
+}

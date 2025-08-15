@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Learn Here Free - Educational Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#059669',
+                        accent: '#dc2626',
+                        'gray-custom': '#1f2937',
+                    },
+                    fontFamily: {
+                        'inter': ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        };
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="font-inter bg-gray-50 min-h-screen">
+
+    <!-- @COMPONENT: LoginScreen [Google Sign-In, error handling] -->
+    <div id="loginScreen" class="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
+        <div class="max-w-md w-full space-y-8">
+            <div class="text-center">
+                <div class="mx-auto h-16 w-16 bg-primary rounded-full flex items-center justify-center mb-4">
+                    <i class="fas fa-graduation-cap text-white text-2xl"></i>
+                </div>
+                <h2 class="text-3xl font-bold text-gray-900">Learn Here Free</h2>
+                <p class="mt-2 text-gray-600">Access your personalized learning content</p>
+            </div>
+            
+            <div class="bg-white rounded-xl shadow-lg p-8">
+                <button data-event="click:handleGoogleSignIn" data-implementation="Implement Google Sign-In with email whitelist validation" 
+                        class="w-full flex justify-center items-center px-4 py-3 border border-gray-300 rounded-lg text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors">
+                    <svg class="w-5 h-5 mr-3" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                
+                <!-- Error Message -->
+                <div id="errorMessage" class="hidden mt-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+                    <div class="flex items-center text-red-700">
+                        <i class="fas fa-exclamation-circle mr-2"></i>
+                        <span data-bind="errorText">Access Denied. Contact Admin.</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 text-center text-sm text-gray-500">
+                    <p>Only authorized email addresses can access this platform</p>
+                    <p class="mt-1">Contact administrator for access requests</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: LoginScreen -->
+
+    <!-- @COMPONENT: MainDashboard [batch selection, navigation] -->
+    <div id="mainDashboard" class="hidden min-h-screen bg-gray-50">
+        <!-- Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-graduation-cap text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-semibold text-gray-900">Learn Here Free</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-3">
+                            <div class="text-sm text-gray-600">
+                                <span data-bind="user.name">John Doe</span>
+                            </div>
+                            <!-- Profile image is not guaranteed to be square, using object-fit: cover -->
+                            <img data-bind="user.profileImage" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" 
+                                 alt="User Profile" class="w-8 h-8 rounded-full object-cover">
+                        </div>
+                        <button data-event="click:handleSignOut" class="text-gray-500 hover:text-gray-700">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Welcome Section -->
+            <div class="mb-8">
+                <h2 class="text-2xl font-bold text-gray-900 mb-2">Welcome back!</h2>
+                <p class="text-gray-600">Choose your batch to continue learning</p>
+            </div>
+
+            <!-- Batch Selection -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+                <!-- @MAP: batches.map(batch => ( -->
+                <div data-event="click:selectBatch" data-implementation="Navigate to batch subjects" 
+                     class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer border hover:border-primary">
+                    <!-- Contemporary educational scene with students using laptops in a modern classroom -->
+                    <img src="https://images.unsplash.com/photo-1522202176988-66273c2fd55f?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=200" 
+                         alt="Batch 2025" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2" data-bind="batch.name">Batch 2025</h3>
+                        <p class="text-gray-600 text-sm mb-4" data-bind="batch.description">Complete course curriculum for competitive exams</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500" data-bind="batch.subjectCount">12 Subjects</span>
+                            <div class="flex items-center text-secondary text-sm">
+                                <span data-bind="batch.progress">78%</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-event="click:selectBatch" class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer border hover:border-primary">
+                    <!-- Students collaborating on a project in a bright, modern study environment -->
+                    <img src="https://images.unsplash.com/photo-1571260899304-425eee4c7efc?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=200" 
+                         alt="Batch 2024" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Batch 2024</h3>
+                        <p class="text-gray-600 text-sm mb-4">Foundation course for beginners</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">8 Subjects</span>
+                            <div class="flex items-center text-secondary text-sm">
+                                <span>92%</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-event="click:selectBatch" class="bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden cursor-pointer border hover:border-primary">
+                    <!-- Advanced learning session with digital tools and modern technology -->
+                    <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=400&h=200" 
+                         alt="Advanced Batch" class="w-full h-48 object-cover">
+                    <div class="p-6">
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Advanced Batch</h3>
+                        <p class="text-gray-600 text-sm mb-4">Advanced topics and specialized content</p>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-500">15 Subjects</span>
+                            <div class="flex items-center text-secondary text-sm">
+                                <span>45%</span>
+                                <i class="fas fa-arrow-right ml-2"></i>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+
+            <!-- Recent Activity -->
+            <div class="bg-white rounded-xl shadow-sm p-6">
+                <h3 class="text-lg font-semibold text-gray-900 mb-4">Recent Activity</h3>
+                <div class="space-y-4">
+                    <!-- @MAP: recentActivity.map(activity => ( -->
+                    <div class="flex items-center space-x-4">
+                        <div class="h-10 w-10 bg-primary bg-opacity-10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-play text-primary text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900" data-bind="activity.title">Mathematics - Algebra Basics</p>
+                            <p class="text-xs text-gray-500" data-bind="activity.time">2 hours ago</p>
+                        </div>
+                        <div class="text-sm text-secondary" data-bind="activity.progress">85% complete</div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="h-10 w-10 bg-secondary bg-opacity-10 rounded-full flex items-center justify-center">
+                            <i class="fas fa-check text-secondary text-sm"></i>
+                        </div>
+                        <div class="flex-1">
+                            <p class="text-sm font-medium text-gray-900">Physics - Motion and Forces</p>
+                            <p class="text-xs text-gray-500">1 day ago</p>
+                        </div>
+                        <div class="text-sm text-secondary">Completed</div>
+                    </div>
+                    <!-- @END_MAP )) -->
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: MainDashboard -->
+
+    <!-- @COMPONENT: SubjectView [subject selection within batch] -->
+    <div id="subjectView" class="hidden min-h-screen bg-gray-50">
+        <!-- Header with Back Navigation -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <button data-event="click:goBack" class="mr-4 p-2 hover:bg-gray-100 rounded-lg">
+                            <i class="fas fa-arrow-left text-gray-600"></i>
+                        </button>
+                        <div class="h-8 w-8 bg-primary rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-graduation-cap text-white text-sm"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-xl font-semibold text-gray-900">Batch 2025</h1>
+                            <p class="text-sm text-gray-500">Choose a subject to start learning</p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <img data-bind="user.profileImage" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" 
+                             alt="User Profile" class="w-8 h-8 rounded-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Subject Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- @MAP: subjects.map(subject => ( -->
+                <div data-event="click:openSubject" data-implementation="Navigate to video list for this subject" 
+                     class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden cursor-pointer border hover:border-primary hover:-translate-y-1">
+                    <div class="p-6">
+                        <div class="h-12 w-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-calculator text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2" data-bind="subject.name">Mathematics</h3>
+                        <p class="text-gray-600 text-sm mb-4" data-bind="subject.description">Algebra, Geometry, Calculus and more</p>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span data-bind="subject.progress">75%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 75%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span data-bind="subject.videoCount">24 Videos</span>
+                            <span data-bind="subject.duration">12 hours</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-event="click:openSubject" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden cursor-pointer border hover:border-primary hover:-translate-y-1">
+                    <div class="p-6">
+                        <div class="h-12 w-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-atom text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Physics</h3>
+                        <p class="text-gray-600 text-sm mb-4">Mechanics, Thermodynamics, Optics</p>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>82%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 82%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>18 Videos</span>
+                            <span>9 hours</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-event="click:openSubject" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden cursor-pointer border hover:border-primary hover:-translate-y-1">
+                    <div class="p-6">
+                        <div class="h-12 w-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-flask text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Chemistry</h3>
+                        <p class="text-gray-600 text-sm mb-4">Organic, Inorganic, Physical Chemistry</p>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>45%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 45%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>22 Videos</span>
+                            <span>11 hours</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div data-event="click:openSubject" class="bg-white rounded-xl shadow-sm hover:shadow-lg transition-all duration-200 overflow-hidden cursor-pointer border hover:border-primary hover:-translate-y-1">
+                    <div class="p-6">
+                        <div class="h-12 w-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center mb-4">
+                            <i class="fas fa-dna text-white text-xl"></i>
+                        </div>
+                        <h3 class="text-lg font-semibold text-gray-900 mb-2">Biology</h3>
+                        <p class="text-gray-600 text-sm mb-4">Cell Biology, Genetics, Ecology</p>
+                        
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Progress</span>
+                                <span>92%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-primary h-2 rounded-full" style="width: 92%"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex justify-between items-center text-sm text-gray-500">
+                            <span>20 Videos</span>
+                            <span>8 hours</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- @END_MAP )) -->
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: SubjectView -->
+
+    <!-- @COMPONENT: VideoPlayer [secure YouTube embedding, ad integration] -->
+    <div id="videoPlayer" class="hidden min-h-screen bg-black">
+        <!-- Video Header -->
+        <div class="bg-gray-900 text-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <button data-event="click:goBack" class="mr-4 p-2 hover:bg-gray-800 rounded-lg">
+                            <i class="fas fa-arrow-left text-white"></i>
+                        </button>
+                        <div>
+                            <h1 class="text-lg font-semibold" data-bind="video.title">Algebra Fundamentals - Chapter 1</h1>
+                            <p class="text-sm text-gray-400" data-bind="subject.name">Mathematics</p>
+                        </div>
+                    </div>
+                    <div class="flex items-center space-x-4">
+                        <button data-event="click:toggleFullscreen" class="p-2 hover:bg-gray-800 rounded-lg">
+                            <i class="fas fa-expand text-white"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Container -->
+        <div class="relative">
+            <!-- @FUNCTIONALITY: This should implement secure YouTube embedding with privacy-enhanced mode -->
+            <div class="relative bg-black" style="padding-bottom: 56.25%; height: 0;">
+                <iframe data-implementation="Use youtube-nocookie.com for privacy-enhanced embedding" 
+                        src="https://www.youtube-nocookie.com/embed/VIDEO_ID?rel=0&modestbranding=1&showinfo=0" 
+                        class="absolute top-0 left-0 w-full h-full" 
+                        frameborder="0" 
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" 
+                        allowfullscreen>
+                </iframe>
+                
+                <!-- Loading Overlay -->
+                <div id="videoLoading" class="absolute inset-0 bg-black flex items-center justify-center">
+                    <div class="text-center text-white">
+                        <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
+                        <p>Loading secure content...</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Banner Ad (Admin Configurable) -->
+            <div id="bannerAd" data-implementation="AdMob banner ad - admin can toggle visibility" 
+                 class="bg-gray-800 text-white text-center py-3 text-sm">
+                <span class="text-gray-400">Advertisement</span>
+                <!-- Ad content placeholder -->
+                <div class="h-12 bg-gray-700 rounded mt-2 mx-4 flex items-center justify-center">
+                    <span class="text-gray-500">Banner Ad Space</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Video Controls & Info -->
+        <div class="bg-white">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+                <!-- Video Title & Description -->
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900 mb-2" data-bind="video.title">Algebra Fundamentals - Chapter 1</h2>
+                    <p class="text-gray-600" data-bind="video.description">Learn the basics of algebraic expressions and equations in this comprehensive introduction.</p>
+                    
+                    <div class="flex items-center space-x-6 mt-4 text-sm text-gray-500">
+                        <span data-bind="video.duration">Duration: 45:32</span>
+                        <span data-bind="video.views">1,234 views</span>
+                        <span data-bind="video.uploadDate">Uploaded: Jan 15, 2025</span>
+                    </div>
+                </div>
+
+                <!-- Navigation & Progress -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Video Navigation -->
+                    <div class="lg:col-span-2">
+                        <div class="flex justify-between items-center mb-4">
+                            <button data-event="click:previousVideo" class="flex items-center px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700">
+                                <i class="fas fa-chevron-left mr-2"></i>
+                                Previous
+                            </button>
+                            <div class="text-sm text-gray-500">
+                                Video <span data-bind="currentVideo">3</span> of <span data-bind="totalVideos">24</span>
+                            </div>
+                            <button data-event="click:nextVideo" class="flex items-center px-4 py-2 bg-primary hover:bg-blue-700 text-white rounded-lg">
+                                Next
+                                <i class="fas fa-chevron-right ml-2"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Progress Bar -->
+                        <div class="mb-4">
+                            <div class="flex justify-between text-sm text-gray-600 mb-1">
+                                <span>Course Progress</span>
+                                <span data-bind="courseProgress">12%</span>
+                            </div>
+                            <div class="w-full bg-gray-200 rounded-full h-2">
+                                <div class="bg-secondary h-2 rounded-full" style="width: 12%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Video Playlist -->
+                    <div class="bg-gray-50 rounded-xl p-4">
+                        <h3 class="font-semibold text-gray-900 mb-4">Course Playlist</h3>
+                        <div class="space-y-2 max-h-96 overflow-y-auto">
+                            <!-- @MAP: playlist.map(video => ( -->
+                            <div data-event="click:playVideo" data-implementation="Load selected video securely" 
+                                 class="flex items-center space-x-3 p-3 hover:bg-white rounded-lg cursor-pointer transition-colors">
+                                <div class="h-8 w-8 bg-primary bg-opacity-10 rounded flex items-center justify-center text-primary text-sm font-medium">
+                                    1
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate" data-bind="video.title">Introduction to Algebra</p>
+                                    <p class="text-xs text-gray-500" data-bind="video.duration">23:45</p>
+                                </div>
+                                <i class="fas fa-play text-gray-400 text-xs"></i>
+                            </div>
+                            
+                            <div class="flex items-center space-x-3 p-3 bg-white rounded-lg border-l-4 border-primary">
+                                <div class="h-8 w-8 bg-primary rounded flex items-center justify-center text-white text-sm font-medium">
+                                    2
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Basic Operations</p>
+                                    <p class="text-xs text-gray-500">45:32</p>
+                                </div>
+                                <i class="fas fa-pause text-primary text-xs"></i>
+                            </div>
+                            
+                            <div data-event="click:playVideo" class="flex items-center space-x-3 p-3 hover:bg-white rounded-lg cursor-pointer transition-colors">
+                                <div class="h-8 w-8 bg-gray-100 rounded flex items-center justify-center text-gray-500 text-sm font-medium">
+                                    3
+                                </div>
+                                <div class="flex-1 min-w-0">
+                                    <p class="text-sm font-medium text-gray-900 truncate">Solving Equations</p>
+                                    <p class="text-xs text-gray-500">38:21</p>
+                                </div>
+                                <i class="fas fa-play text-gray-400 text-xs"></i>
+                            </div>
+                            <!-- @END_MAP )) -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- @END_COMPONENT: VideoPlayer -->
+
+    <!-- @COMPONENT: AdminDashboard [content management, ad controls] -->
+    <div id="adminDashboard" class="hidden min-h-screen bg-gray-50">
+        <!-- Admin Header -->
+        <header class="bg-white shadow-sm border-b">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between items-center h-16">
+                    <div class="flex items-center">
+                        <div class="h-8 w-8 bg-accent rounded-lg flex items-center justify-center mr-3">
+                            <i class="fas fa-crown text-white text-sm"></i>
+                        </div>
+                        <h1 class="text-xl font-semibold text-gray-900">Admin Dashboard</h1>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <button data-event="click:exitAdmin" class="px-4 py-2 text-gray-600 hover:text-gray-800">
+                            Exit Admin
+                        </button>
+                        <img data-bind="admin.profileImage" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40" 
+                             alt="Admin Profile" class="w-8 h-8 rounded-full object-cover">
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <!-- Admin Stats -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 bg-primary bg-opacity-10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-users text-primary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Users</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="stats.totalUsers">1,234</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 bg-secondary bg-opacity-10 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-play-circle text-secondary text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Total Videos</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="stats.totalVideos">456</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 bg-yellow-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-layer-group text-yellow-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Active Batches</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="stats.activeBatches">12</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="bg-white rounded-xl shadow-sm p-6">
+                    <div class="flex items-center">
+                        <div class="h-12 w-12 bg-purple-100 rounded-xl flex items-center justify-center">
+                            <i class="fas fa-dollar-sign text-purple-600 text-xl"></i>
+                        </div>
+                        <div class="ml-4">
+                            <p class="text-sm text-gray-600">Ad Revenue</p>
+                            <p class="text-2xl font-bold text-gray-900" data-bind="stats.adRevenue">$2,345</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Admin Tabs -->
+            <div class="bg-white rounded-xl shadow-sm overflow-hidden">
+                <div class="border-b border-gray-200">
+                    <nav class="-mb-px flex space-x-8 px-6" aria-label="Tabs">
+                        <button data-event="click:switchTab" data-tab="batches" 
+                                class="py-4 px-1 border-b-2 border-primary text-primary font-medium text-sm whitespace-nowrap">
+                            Batch Management
+                        </button>
+                        <button data-event="click:switchTab" data-tab="users" 
+                                class="py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap">
+                            User Management
+                        </button>
+                        <button data-event="click:switchTab" data-tab="ads" 
+                                class="py-4 px-1 border-b-2 border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 font-medium text-sm whitespace-nowrap">
+                            Ad Controls
+                        </button>
+                    </nav>
+                </div>
+
+                <!-- Batch Management Tab -->
+                <div id="batchesTab" class="p-6">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-semibold text-gray-900">Manage Batches</h3>
+                        <button data-event="click:createBatch" data-implementation="Open batch creation modal" 
+                                class="px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                            <i class="fas fa-plus mr-2"></i>Create Batch
+                        </button>
+                    </div>
+                    
+                    <div class="space-y-4">
+                        <!-- @MAP: batches.map(batch => ( -->
+                        <div class="border border-gray-200 rounded-lg p-4">
+                            <div class="flex justify-between items-start mb-4">
+                                <div>
+                                    <h4 class="text-lg font-medium text-gray-900" data-bind="batch.name">Batch 2025</h4>
+                                    <p class="text-gray-600" data-bind="batch.description">Complete course curriculum for competitive exams</p>
+                                    <p class="text-sm text-gray-500 mt-1">
+                                        <span data-bind="batch.studentCount">234 students</span> • 
+                                        <span data-bind="batch.subjectCount">12 subjects</span> • 
+                                        <span data-bind="batch.videoCount">145 videos</span>
+                                    </p>
+                                </div>
+                                <div class="flex space-x-2">
+                                    <button data-event="click:editBatch" class="p-2 text-gray-500 hover:text-gray-700">
+                                        <i class="fas fa-edit"></i>
+                                    </button>
+                                    <button data-event="click:deleteBatch" class="p-2 text-red-500 hover:text-red-700">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <!-- Subjects List -->
+                            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
+                                <!-- @MAP: batch.subjects.map(subject => ( -->
+                                <div class="bg-gray-50 rounded-lg p-3">
+                                    <div class="flex justify-between items-center">
+                                        <div>
+                                            <p class="font-medium text-gray-900" data-bind="subject.name">Mathematics</p>
+                                            <p class="text-xs text-gray-500" data-bind="subject.videoCount">24 videos</p>
+                                        </div>
+                                        <button data-event="click:manageSubject" class="text-primary hover:text-blue-700">
+                                            <i class="fas fa-cog text-sm"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                                <!-- @END_MAP )) -->
+                            </div>
+                        </div>
+                        <!-- @END_MAP )) -->
+                    </div>
+                </div>
+
+                <!-- Ad Controls Tab -->
+                <div id="adsTab" class="hidden p-6">
+                    <h3 class="text-lg font-semibold text-gray-900 mb-6">Advertisement Controls</h3>
+                    
+                    <div class="space-y-6">
+                        <!-- Rewarded Ads -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h4 class="text-lg font-medium text-gray-900">Rewarded Ads</h4>
+                                    <p class="text-gray-600">Show on app open and video start</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input data-event="change:toggleRewardedAds" type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500">Frequency</p>
+                                    <p class="font-medium">Once per session</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Revenue (30 days)</p>
+                                    <p class="font-medium text-secondary">$1,234</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Impressions</p>
+                                    <p class="font-medium">45,678</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Banner Ads -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h4 class="text-lg font-medium text-gray-900">Banner Ads</h4>
+                                    <p class="text-gray-600">Fixed banner below videos</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input data-event="change:toggleBannerAds" type="checkbox" checked class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500">Position</p>
+                                    <p class="font-medium">Below video player</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Revenue (30 days)</p>
+                                    <p class="font-medium text-secondary">$567</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">CTR</p>
+                                    <p class="font-medium">2.3%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Interstitial Ads -->
+                        <div class="border border-gray-200 rounded-lg p-6">
+                            <div class="flex justify-between items-center mb-4">
+                                <div>
+                                    <h4 class="text-lg font-medium text-gray-900">Interstitial Ads</h4>
+                                    <p class="text-gray-600">Show when video is paused</p>
+                                </div>
+                                <label class="relative inline-flex items-center cursor-pointer">
+                                    <input data-event="change:toggleInterstitialAds" type="checkbox" class="sr-only peer">
+                                    <div class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary"></div>
+                                </label>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                                <div>
+                                    <p class="text-gray-500">Trigger</p>
+                                    <p class="font-medium">Video pause</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Revenue (30 days)</p>
+                                    <p class="font-medium text-secondary">$890</p>
+                                </div>
+                                <div>
+                                    <p class="text-gray-500">Fill Rate</p>
+                                    <p class="font-medium">87%</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Bulk Controls -->
+                        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6">
+                            <h4 class="text-lg font-medium text-gray-900 mb-4">Bulk Ad Controls</h4>
+                            <div class="flex space-x-4">
+                                <button data-event="click:disableAllAds" data-implementation="Disable all ad types simultaneously" 
+                                        class="px-4 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-colors">
+                                    <i class="fas fa-ban mr-2"></i>Disable All Ads
+                                </button>
+                                <button data-event="click:enableAllAds" class="px-4 py-2 bg-secondary text-white rounded-lg hover:bg-green-700 transition-colors">
+                                    <i class="fas fa-check mr-2"></i>Enable All Ads
+                                </button>
+                            </div>
+                            <p class="text-sm text-yellow-700 mt-3">
+                                <i class="fas fa-info-circle mr-1"></i>
+                                Use during exam periods or special events to improve user experience
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+    <!-- @END_COMPONENT: AdminDashboard -->
+
+    <!-- Rewarded Ad Modal (Admin Configurable) -->
+    <div id="rewardedAdModal" data-implementation="AdMob rewarded ad integration" 
+         class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 text-center">
+            <div class="h-16 w-16 bg-primary bg-opacity-10 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i class="fas fa-gift text-primary text-2xl"></i>
+            </div>
+            <h3 class="text-lg font-semibold text-gray-900 mb-2">Watch Ad to Continue</h3>
+            <p class="text-gray-600 mb-6">Watch a short ad to unlock your learning content</p>
+            <div class="flex space-x-3">
+                <button data-event="click:watchAd" class="flex-1 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-700 transition-colors">
+                    Watch Ad
+                </button>
+                <button data-event="click:skipAd" class="flex-1 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                    Skip
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // TODO: Implement business logic, API calls, or state management
+        
+        (function() {
+            // Application state management
+            let currentView = 'login';
+            let currentUser = null;
+            let isAdmin = false;
+            
+            // Mock data for demonstration
+            const mockBatches = [
+                { id: 1, name: 'Batch 2025', description: 'Complete course curriculum for competitive exams', subjectCount: 12, progress: 78 },
+                { id: 2, name: 'Batch 2024', description: 'Foundation course for beginners', subjectCount: 8, progress: 92 },
+                { id: 3, name: 'Advanced Batch', description: 'Advanced topics and specialized content', subjectCount: 15, progress: 45 }
+            ];
+
+            // View switching functionality
+            function showView(viewId) {
+                document.querySelectorAll('[id$="Screen"], [id$="Dashboard"], [id$="View"], [id$="Player"]').forEach(el => {
+                    el.classList.add('hidden');
+                });
+                document.getElementById(viewId).classList.remove('hidden');
+                currentView = viewId;
+            }
+
+            // Initialize app
+            function initializeApp() {
+                // Check if user is already authenticated
+                const savedUser = localStorage.getItem('learnHereFreeUser');
+                if (savedUser) {
+                    currentUser = JSON.parse(savedUser);
+                    showView('mainDashboard');
+                } else {
+                    showView('loginScreen');
+                }
+            }
+
+            // Mock Google Sign-In
+            window.handleGoogleSignIn = function() {
+                // Simulate Google Sign-In process
+                const mockUser = {
+                    name: 'John Doe',
+                    email: 'john.doe@example.com',
+                    profileImage: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=40&h=40'
+                };
+
+                // Simulate email whitelist check
+                const whitelistedEmails = ['john.doe@example.com', 'admin@learnherefree.com'];
+                
+                if (whitelistedEmails.includes(mockUser.email)) {
+                    currentUser = mockUser;
+                    localStorage.setItem('learnHereFreeUser', JSON.stringify(mockUser));
+                    showView('mainDashboard');
+                } else {
+                    document.getElementById('errorMessage').classList.remove('hidden');
+                }
+            };
+
+            // Navigation functions
+            window.selectBatch = function(batchId) {
+                showView('subjectView');
+            };
+
+            window.openSubject = function(subjectId) {
+                showView('videoPlayer');
+            };
+
+            window.goBack = function() {
+                if (currentView === 'subjectView') {
+                    showView('mainDashboard');
+                } else if (currentView === 'videoPlayer') {
+                    showView('subjectView');
+                }
+            };
+
+            window.handleSignOut = function() {
+                localStorage.removeItem('learnHereFreeUser');
+                currentUser = null;
+                showView('loginScreen');
+            };
+
+            // Admin functions
+            window.switchToAdmin = function() {
+                isAdmin = true;
+                showView('adminDashboard');
+            };
+
+            window.exitAdmin = function() {
+                isAdmin = false;
+                showView('mainDashboard');
+            };
+
+            // Tab switching in admin
+            window.switchTab = function(tabName) {
+                document.querySelectorAll('[id$="Tab"]').forEach(tab => {
+                    tab.classList.add('hidden');
+                });
+                document.getElementById(tabName + 'Tab').classList.remove('hidden');
+                
+                // Update active tab styling
+                document.querySelectorAll('[data-tab]').forEach(btn => {
+                    btn.classList.remove('border-primary', 'text-primary');
+                    btn.classList.add('border-transparent', 'text-gray-500');
+                });
+                document.querySelector(`[data-tab="${tabName}"]`).classList.add('border-primary', 'text-primary');
+                document.querySelector(`[data-tab="${tabName}"]`).classList.remove('border-transparent', 'text-gray-500');
+            };
+
+            // Ad control functions
+            window.toggleRewardedAds = function(enabled) {
+                console.log('Rewarded ads:', enabled ? 'enabled' : 'disabled');
+            };
+
+            window.toggleBannerAds = function(enabled) {
+                const bannerAd = document.getElementById('bannerAd');
+                if (bannerAd) {
+                    bannerAd.style.display = enabled ? 'block' : 'none';
+                }
+            };
+
+            window.toggleInterstitialAds = function(enabled) {
+                console.log('Interstitial ads:', enabled ? 'enabled' : 'disabled');
+            };
+
+            window.disableAllAds = function() {
+                document.querySelectorAll('[data-event*="toggle"][type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.dispatchEvent(new Event('change'));
+                });
+            };
+
+            window.enableAllAds = function() {
+                document.querySelectorAll('[data-event*="toggle"][type="checkbox"]').forEach(checkbox => {
+                    checkbox.checked = true;
+                    checkbox.dispatchEvent(new Event('change'));
+                });
+            };
+
+            // Initialize the application
+            initializeApp();
+        })();
+    </script>
+</body>
+</html>
